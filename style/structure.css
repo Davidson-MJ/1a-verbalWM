@@ -1,0 +1,290 @@
+/*
+Static structure of the elements in the experiment.
+*/
+
+@keyframes addTabRight {
+    from { margin-left: 110%; }
+    to { margin-left: 0; }
+}
+@keyframes addTabLeft {
+    from { left: -110%; }
+    to { left: 0; }
+}
+
+:root {
+    --content-height: 500;
+    --content-width: 900;
+
+    --font-size-small: 24px;
+    --font-size-medium: 32px;
+
+    --tag-border-radius: 0.5em;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    font-family: 'Open Sans', 'Arial', sans-serif;
+    font-size: 18px;
+    line-height: 1.6em;
+    text-align: center;
+}
+div {
+    position: relative;
+    /* Text placed directly in a DIV should not be selectable */
+    user-select: none;
+}
+
+:focus {
+    outline: none;
+}
+
+.content-wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+}
+
+#content {
+    height: calc(var(--content-height) * 1px);
+    width: calc(var(--content-width) * 1px);
+    min-height: calc(var(--content-height) * 1px);
+    min-width: calc(var(--content-width) * 1px);
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 4px solid black;
+    border-radius: 5px;
+    margin: auto;
+    overflow: hidden;
+}
+
+#content > .frame {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#content > .frame.top {
+    height: 60rem;
+    margin-top: .2em;
+}
+
+#content > .frame.bottom {
+    height: 40rem;
+}
+
+#content > .frame.top > .left,
+#content > .frame.top > .right {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+#content > .frame.top > .middle {
+    width: 60%;
+}
+
+#stimulus {
+    height: calc(100% - 2em);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 1;
+    font-size: var(--font-size-medium);
+}
+#stimulus * {
+    max-height: 100%;
+}
+#stimulus > *:first-child {
+    margin: auto;
+}
+
+#prompt {
+    margin: .25em 0;
+    font-size: var(--font-size-medium);
+    height: 2em;
+}
+
+#response-panel {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.5s;
+    opacity: 0.2;
+}
+
+#instructions {
+    position: absolute;
+    width: 100%;
+}
+
+#training-instructions {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: none;
+    font-style: italic;
+    font-size: var(--font-size-small);
+    background-color: var(--esm-help-backgroundColor);
+    border: 1px solid var(--esm-help-borderColor);
+}
+
+#training-instructions.top {
+    bottom: unset;
+    top: 0;
+}
+
+.progress-bar {
+    display: block;
+    height: .2em;
+    width: 99%;
+    margin: 2px auto;
+}
+.progress-bar .outer {
+    height: 100%;
+    width: 75%;
+    border: 1px solid transparent;
+    background-color: #00ccfc;
+}
+.progress-bar .inner {
+}
+
+.advisor-key-row {
+    display: flex;
+    flex-direction: column;
+    line-height: 1em;
+    padding: .25em 0;
+    margin: 0.5em 0 0 0;
+    font-size: 32px;
+}
+.left .advisor-key-row {
+    border-top-right-radius: var(--tag-border-radius);
+    border-bottom-right-radius: var(--tag-border-radius);
+    box-shadow: 1px 1px 1px 0 black;
+
+    width: 100%;
+    animation: addTabLeft 1s forwards;
+}
+.right .advisor-key-row {
+    border-top-left-radius: var(--tag-border-radius);
+    border-bottom-left-radius: var(--tag-border-radius);
+    box-shadow: -1px 1px 1px 0 black;
+
+    width: 100%;
+    animation: addTabRight 1s forwards;
+}
+
+/* Markers */
+@keyframes adviceAnimation1st {
+    from {
+        top: -252px;
+        left: -11px;
+    }
+}
+@keyframes adviceAnimation2nd {
+    from {
+        top: -147px;
+        left: -11px;
+    }
+}
+
+.marker {
+    height: 100%;
+    width: 100%;
+}
+.marker svg {
+    width: 1.1em;
+    height: 1.1em;
+    stroke-width: 2px;
+}
+
+.response-marker.advisor {
+    width: 1.2em;
+    height: 1.2em;
+    animation: adviceAnimation1st 1s forwards ease-in-out;
+}
+.response-marker.advisor + .response-marker.advisor {
+    animation-name: adviceAnimation2nd;
+}
+.response-marker.advisor,
+.response-marker.feedback,
+.response-marker.ghost {
+    display: none;
+}
+
+.response-marker.feedback {
+    color: #ffe96e;
+    font-weight: bold;
+    position: absolute;
+    transform: scale(3);
+}
+.response-marker.feedback::before {
+    left: 50%;
+    background-color: black;
+    height: 70%;
+    content: "";
+    width: 1px;
+    border-radius: 100%;
+    top: 50%;
+    position: absolute;
+    z-index: -1;
+}
+
+.response-marker.ghost {
+    opacity: .2;
+}
+
+#help-button {
+    position: absolute;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0.3em;
+    padding: 0.3em;
+    border-radius: 1em;
+    width: 2em;
+    height: 2em;
+    border: 1px solid black;
+    background-color: transparent;
+    bottom: 0;
+    right: 0;
+}
+#help-button.show-help {
+    background-color: yellow;
+}
+
+/* Counter widget */
+@keyframes tickAway {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: -63;
+    }
+}
+.counter svg {
+    fill: transparent;
+    stroke: black;
+    stroke-width: 1px;
+    stroke-dasharray: 63px;
+    animation: tickAway forwards linear;
+}
+.counter circle {
+    transform: rotateZ(270deg);
+    transform-origin: 50% 50%;
+}
+.counter span {
+    position: absolute;
+    top: calc(50% - 12px);
+    left: calc(50% - 10px);
+    width: 20px;
+    line-height: 20px;
+    font-size: 14px;
+}
