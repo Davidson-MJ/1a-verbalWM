@@ -48,7 +48,7 @@ either no overlap (baseline), at image presentation, at first order response, or
 
 ///////////////////////////////////////////////////////////////////
 // first task is to import other functions that are used in the JsPsych plugins,below
-import {utils, OrientationStim, OrientationMasks, GaborFiles, Maskfiles, makeV_WMarray,makeV_WMprobe, BuildExp} from '../src/verbalWMdefs.js'
+import {utils, OrientationStim, OrientationMasks, GaborFiles, MaskFiles, makeV_WMarray, makeV_WMprobe, BuildExp} from '../src/verbalWMdefs.js'
 
 //some basic parameters
 
@@ -931,7 +931,7 @@ jsPsych.init({
 
     
     timeline:timeline, // just contains instructions now.
-    preload_images: GaborFiles, Maskfiles,
+    preload_images: GaborFiles, MaskFiles,
     show_progress_bar: true,
     auto_update_progress_bar: false,
     on_finish: function() {
