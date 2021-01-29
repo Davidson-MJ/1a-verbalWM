@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Consent Form</title>
+    <link rel="stylesheet" href="https://mjaquiery.github.io/jsPsych/css/jspsych.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <style type="text/css">
+        * {box-sizing: border-box;}
+        body {font-family: sans-serif; margin: 0;}
+        #banner {position: fixed; text-align: center; height: 6em; background: #002147; display: flex; width: 100%; font-weight: bold; color: white; min-width: 900px;}
+        #banner > .left {width: 15%; text-align: left; position: absolute; left: 0;}
+        #banner > .center {text-align: center; position: absolute; left: 15%; width: 50%;}
+        #banner > .right {background-color: white; position: absolute; left: 65%; width: 35%;}
+        #banner .middle {}
+        #panel {padding-top: 6em; text-align: center;}
+        #head {height: 5em;}
+        #title {font-size: 1.6em;}
+        #subtitle {font-size: 1.6em;}
+        #lastupdate {font-size: 1.1em;}
+        #window {background-color: white; text-align: left; padding-left: 1em; padding-right: 1em;}
+        #foot {min-height: 2em; border-top: 1px dotted #002147; padding: 1em;}
+        #oxLogo {}
+        #epLogo {}
+        section {}
+        span.lead {font-weight: bold;}
+        a {font-family: serif; text-decoration: none; color: #002147; font-weight: bold;}
+        a:hover {text-decoration: underline;}
+        a.link {}
+        a.mailto {}
+        div.missing {background-color: #002147; color: white; font-weight: bold;}
+        div.required {margin: 0.5em;}
+        img.logo {height: 6em;}
+        input.big {min-height: 2em; min-width: 2em; vertical-align: middle;}
+        input.submit {}
+        .right .logo {max-width: 45%;}
+    </style>
+</head>
+<body>
+    <div id="banner">
+        <div class="left">
+            <a href="https://www.ox.ac.uk/"><img id="oxLogo" class="logo" src="assets/image/oxweb-logo.gif" alt="University of Oxford"/></a>
+        </div>
+        <div class="center">
+            <div class="middle">
+                <section id="title">Decision Confidence in Human-Machine Teaming</section>
+                <section id="subtitle">Participant Information</section>
+                <section id="lastupdate">Updated 23 July 2019</section>
+            </div>
+        </div>
+        <div class="right">
+            <a href="https://www.oxacclab.org/"><img id="accLogo" class="logo" src="assets/image/acclab.jpg" alt="Attention and Cognitive Control Lab"/></a>
+            <a href="https://www.psy.ox.ac.uk/"><img id="epLogo" class="logo" src="assets/image/ep-logo-with-msd.jpg" alt="Department of Experimental Psychology"/></a>
+        </div>
+    </div>
+    <div id="panel">
+        <div id="window">
+            <section id="intro">
+                <p><span class="lead">Welcome</span>. Below you will find information that will help you to decide whether to take part in this study. If you have questions about anything, please feel free to contact us.</p>
+            </section>
+            <section id="purpose">
+                <p><span class="lead">In this study</span> we are interested in understanding how the brain is organized, processes information and performs skills such as decision making. We can investigate this using computer-based behavioural tasks which are safe and non-invasive. Using many different techniques available on a computer program, we can gain information about human behaviour. We are interested in investigating the processes of decision making, and your confidence in those decisions.</p>
+            </section>
+            <section id="procedure">
+                <p><span class="lead">During the study</span> you will be performing computer-based tasks and will be asked to respond to stimuli appearing on the screen and respond via mouse clicks.</p>
+            </section>
+            <section id="withdraw">
+                <p><span class="lead">You are free</span> to withdraw from the study at any point. To do so, simply close your browser tab. There will be no penalty for doing so. Data will not be stored until the study is complete. Once the study is complete, we are unlikely to be able to remove data from analysis.</p>
+            </section>
+            <section id="privacy">
+                <p><span class="lead">We collect data</span> on your performance during the study. Any information collected about you during this study would be kept strictly confidential. Any data (including task performance/questionnaire answers) will be anonymised with a code so that the results could not be linked back to you. All the data is kept on firewall and password- protected computers. Any personal information about you would be destroyed at the end of the study. Sometimes, new methods to analyze data become available after a study has ended. Therefore we would ask for your permission to use your anonymised data in future studies, and to share data, such as your anonymised scan data, with other researchers both inside and outside the European Union. Responsible members of the University of Oxford may be given access to data for monitoring and/or audit of the study to ensure we are complying with guidelines.</p>
+                <p><span class="lead">Personal data</span>, specifically IP addresses, are logged by the server as part of the normal process of providing secure and stable service. The University of Oxford is the data controller with respect to these data. Your personal data are stored separately and will not be linked to your performance. Your personal data will not be shared, and only responsible members of the University of Oxford will be allowed access for monitoring, audit, or server administration purposes.</p>
+            </section>
+            <!--section id="cookies">
+                <p><span class="lead">We use cookies</span> to help track participation (so we don't have to record things our end). For more information about cookies, see <a class="link" href="https://ico.org.uk/your-data-matters/online/cookies/" target="_blank">ico.org.uk <i class="fas fa-external-link-alt fa-xs"></i></a>.</p>
+            </section-->
+            <section id="payment">
+                <p><span class="lead">Payment rates</span> and conditions, where applicable, will have been made clear previously. If you are unsure about payment, please contact us.</p>
+            </section>
+            <section id="oversight">
+                <p><span class="lead">Ethical approval</span> for this study has been granted by Oxford Tropical Research Ethics Committee (OxTREC). There are no significant risks or benefits to you, although the data will contribute to scientific discovery.</p>
+            </section>
+            <section id="contact">
+                <p><span class="lead">If you have a concern</span> about any aspect of this project, please speak to the researcher, <a class="mailto" href="mailto:matthew.davidson@psy.ox.ac.uk?subject=online vWM query">Matt Davidson [matthew.davidson@psy.ox.ac.uk]</a>, or the principal investigator, <a class="mailto" href="mailto:nicholas.yeung@psy.ox.ac.uk?subject=online vWM query">Prof Nick Yeung [nicholas.yeung@psy.ox.ac.uk]</a>, who will do their best to answer your query. The researcher should acknowledge your concern within 10 working days and give you an indication of how they intend to deal with it. If you remain unhappy or wish to make a formal complaint, please contact the Chair of the Research Ethics Committee at the University of Oxford: Chair, Medical Sciences Inter-Divisional Research Ethics Committee; Email: <a class="mailto" href="mailto:ethics@medsci.ox.ac.uk">ethics@medsci.ox.ac.uk</a>; Address: Research Services, University of Oxford, Wellington Square, Oxford OX1 2JD.</p>
+            </section>
+            <section id="funding">
+                <p><span class="lead">The study is funded</span> by the <a class="link" href="https://www.oxacclab.org/" target="_blank">Attention and Cognitive Control Laboratory <i class="fas fa-external-link-alt fa-xs"></i></a> at Oxford University, and by the U.S. Department of Defense.</p>
+            </section>
+        </div>
+        <div id="foot">
+            <form onsubmit="checkForm();return false">
+                <div class="required">
+                    I have read the above information and understand that I can cease participation at any time <input class="big mandatory" type="checkbox"/>
+                </div>
+                <div class="required">
+                    I am 18 years old or older <input class="big mandatory" type="checkbox"/>
+                </div>
+                <div>
+                    <input class="big submit" type="submit" value="I am willing to participate"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    // Work out where we're supposed to be going afterwards
+    let study = "";
+    let page = "";
+    let query = window.location.search.split('&');
+    query[0] = query[0].substr(1,query[0].length-1);
+    for(let i=0; i<query.length; i++) {
+        let pair = query[i].split('=');
+        if(pair[0]==='study')
+            study = pair[1];
+        if(pair[0]==='page')
+            page = pair[1] + '.html';
+    }
+    /**
+     * Replace all instances of 'contact us' with an appropriate link wrapper
+     */
+    let ps = document.querySelectorAll('p');
+    for(let i=0; i<ps.length; i++) {
+        let p = ps[i];
+        p.innerHTML = p.innerHTML.replace("contact us", '<a class="mailto" href="mailto:matt.jaquiery@psy.ox.ac.uk?subject=' + study + ' Query">contact us</a>');
+    }
+
+    function checkForm() {
+        let boxes = document.querySelectorAll('input.mandatory');
+        // Check requirements
+        let okay = true;
+        for(let i=0; i<boxes.length; i++) {
+            if(!boxes[i].checked) {
+                okay = false;
+                break;
+            }
+        }
+        // Highlight missing options
+        if(!okay) {
+            let inputs = document.querySelectorAll('input.mandatory');
+            for(let i=0; i<inputs.length; i++) {
+                let div = inputs[i].parentElement;
+                if(inputs[i].checked == false)
+                    div.classList.add('missing');
+                else
+                    div.classList.remove('missing');
+            }
+            return;
+        }
+        // Proceed with the study
+        // Navigate to the appropriate place
+        let prolificID = window.location.search.match('[?&]PROLIFIC_PID=\\w+');
+        if(prolificID !== null)
+            prolificID = prolificID[0].substring(14);
+        if(study !== "") {
+            redirectURL = study + "/" + page + "?consent=true";
+            if(prolificID !== null)
+                redirectURL += "&PROLIFIC_PID=" + prolificID;
+            window.location.href =  redirectURL; // forward as if user clicked a link
+        }
+
+    }
+</script>
+</html>

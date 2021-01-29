@@ -47,7 +47,7 @@
 
 ///////////////////////////////////////////////////////////////////
 // first task is to import other functions that are used in the JsPsych plugins,below
-import {utils, OrientationStim, OrientationMasks, GaborFiles, makeV_WMarray,makeV_WMprobe, BuildExp} from '../src/verbalWMdefs.js'
+import {utils, OrientationStim, OrientationMasks, GaborFiles, Maskfiles, makeV_WMarray,makeV_WMprobe, BuildExp} from '../src/verbalWMdefs.js'
 
 //some basic parameters
 
@@ -58,9 +58,9 @@ let useTypes = [0,1,2,3]; // these are the different conditions. Defined as:
   //   response: 2,    // WM interference overlaps with response mapping
   //   confj: 3,   // WM interference overlaps with providing confjudgement
 
-let npracgabor_only = 5; //practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
-let nTrialsregBlock = 10; //ntrials per condition (useTypes above).
-let nBlockreps = 2; // nblocks of nTrialsregBlock, per condition.
+let npracgabor_only = 10; // 5 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
+let nTrialsregBlock = 20; //10 ntrials per condition (useTypes above).
+let nBlockreps = 3; // nblocks of nTrialsregBlock, per condition.
 // let fixation_times = [1000, 1100, 1500, 2000]; // fix cross will jitter using these vals.
 let doInstruct = true; // show instruction slide show.
 let fixation_times = 500; // long interval.
@@ -74,10 +74,10 @@ let fixPreStim = 500; //short fixation interval.
 let trialStimDuration = 200; // gabor show time.
 
 let wholeExpStaircasing= false;
-let nStaircaseTrials = 30; // 30 //pre experiment, baseline condition only.
+let nStaircaseBlocks = 3; // *nTrialsregBlock, completed pre experiment, baseline condition only.
 
 let PermBlocksYN = true; // permute the order of the blocks (of those specified in useTypes above)
-let endRedirectURL = 'https://www.bbc.co.uk'; //What URL to redirect to after the experiment, 
+let endRedirectURL = 'https://app.prolific.co/submissions/complete?cc=595E8D06'; //What URL to redirect to after the experiment, 
 
 
 
@@ -101,9 +101,9 @@ let gov = new BuildExp({
     blockLength: nTrialsregBlock,
     useTypesBuild: useTypes, // which experiment procedures to include?
     PermBlocks: PermBlocksYN,
-    numStaircase: nStaircaseTrials,
+    numStaircase: nStaircaseBlocks,
 
-
+    totalTrialsforProgbar: nStaircaseBlocks*nTrialsregBlock + useTypes.length*nBlockreps*nTrialsregBlock,
 
     completionURL: endRedirectURL,
 })
@@ -113,9 +113,9 @@ let gov = new BuildExp({
 window.gov = gov;
 
 // call the trials for running the staircase, pre experiment
-gov.trials= gov.getTrials("practice"); 
+// gov.trials= gov.getTrials("practice"); 
 // call the trials from the experimental definition
-gov.trials = gov.getTrials("experiment"); //for now, this is a mainly empty array, but we will update entries as we call functions, and call previous entries to define new input (such as staircasing, WM probes, etc).
+gov.trials = gov.getTrials("experimental"); //for now, this is a mainly empty array, but we will update entries as we call functions, and call previous entries to define new input (such as staircasing, WM probes, etc).
 
 gov.finalTrialindex= gov.trials.length-1;
 
@@ -212,7 +212,7 @@ const remstartblock = {
 	on_start: function(trial) {      
        // define page based on current block type
        let currID = gov.currentTrialIndex;
-       let currblock = gov.trials[currID].type+1; // plus one to account for ppt index.
+       let currblock = gov.trials[currID].type+1; // plus one to account for powerpoint index.
 	   trial.pages  = ['<img width="1000" height="560" src="./instructions/remindBlocktypes/Slide' + currblock.toString() + '.jpeg"></img>'];
     }
 }
@@ -259,13 +259,36 @@ var blockBreak = {
 
 var blockResume = {
   type: "html-button-response",
-  stimulus: "<p> Enjoy a short break. </p> <p> When you are ready, </p> <p>Click 'Next' to resume.</p>" +  
-      "<div style='width: 700px;'>",
+  stimulus: '' ,//"<p> Enjoy a short break. </p> <p> When you are ready, </p> <p>Click 'Next' to resume.</p>" +  "<div style='width: 700px;'>",
 
   choices: ['Next'], // button option responses.
   response_ends_trial: true, 
-  on_load: (trial)=>{
+  on_start: (trial)=>{
         gov.fullscreenMode();
+
+        // display feedback in the text. Calculate the % correct for verbal and image tasks, this block. 
+        let currID=gov.currentTrialIndex;
+        let blockStart= currID - gov.blockLength;
+        // extract the responses from the gov.trials object, over the previous block 
+        let wmtotal = 0;
+        let imtotal = 0;
+        for (let c=blockStart; c<currID; c++) {
+        	if (gov.trials[c].WM_correct ==true) {
+        		wmtotal = wmtotal+1;
+        	}
+        	
+        	if (gov.trials[c].Orien_correct ==true) {
+        		imtotal = imtotal+1;	
+        	}
+        	
+        } //
+        
+        // display % correct
+        let wmpct = (wmtotal/gov.blockLength)*100;
+        let impct = (imtotal/gov.blockLength)*100;
+         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
+
+
     }
 }
 
@@ -300,7 +323,14 @@ var fixation_post = {
     choices:jsPsych.NO_KEYS, // freezes keyboard
     //trial_duration is fixation time, randomized from the fixation_times array set above.
     trial_duration: 500, // 200 ms 
-        
+        on_start: function(){
+        	//determine current experiment progress, and manually set progress bar.
+        	// this is at the end of each trial.
+        	let currID = gov.currentTrialIndex;
+        	let prog = [];
+        	prog = currID/gov.totalTrialsforProgbar;
+        	jsPsych.setProgressBar(prog); 
+        },
         on_finish(trial){ // keep track of the trials.
             // gov.drawProgressBar();
             gov.currentTrialIndex++ ;
@@ -413,7 +443,9 @@ var Gabor_show = {
          
          let a = parseInt(degs1);
          let b = parseInt(degs2);
-         gov.trials[currID].OrienDegs = [a, b]; //store the degrees as [int]        
+         gov.trials[currID].OrienDegs = [a, b]; //store the degrees as [int]    
+
+         //$('.jspsych-content').css('cursor', 'none');    
     },
 
     }
@@ -445,8 +477,14 @@ var Gabor_probe = {
     maintain_aspect_ratio: true,
     
     choices : [ 'left' ,'right'] ,  // keyboard responses available.
-    prompt: 'which side was this image on?',
-    response_ends_trial: true,
+    margin_horizontal: '30', // how far apart to space the buttons (px)
+	margin_vertical: '', // how far below to space the buttons (px)
+    prompt: '<p> which side was this image on? </p>', 
+
+    response_ends_trial: true,  
+    
+
+    button_html: '<button class="jspsych-btn">%choice%</button>',
 
     // import the appropriate probe stimulus, based on previous display
     on_start: function(trial) {
@@ -576,6 +614,7 @@ var V_WMarray ={
          gov.trials[currID].WMstring = mylaststring;   
 
 
+
          // also store the letter indices,  and subsequent difficulty
          let characters = "FGHJKLMNPQRST"; 
          // find index of tmpstring
@@ -657,12 +696,33 @@ var V_WMprobe ={
 
          // store answer
          let WManswer = data.button_pressed
-         let WM_rt = data.rt
-
+         let WM_rt = data.rt     
          gov.trials[currID].WM_answer = WManswer; 
          
          gov.trials[currID].WM_rt = WM_rt; 
-    }
+
+
+         // calculate if correct response or not.
+         // find the true index of the probed letter. Then determine if it matches the probed location.
+         let lprobe = []; let locprobe= [];
+         lprobe =gov.trials[currID].WMprobe[0]; //probed letter.
+         locprobe=gov.trials[currID].WMprobe[3]; //probed letter location.
+         let trueprobeidx = mylaststring.indexOf(lprobe);
+         // see if the participant response should be yes or no, by matching the probed location with true location.
+         //HACK BELOW
+         if ((trueprobeidx==locprobe) && WManswer==0) { // 0 is yes, no is 1
+         	gov.trials[currID].WM_correct = true;
+         }
+         if ((trueprobeidx==locprobe) && WManswer==1) { // 0 is yes, no is 1
+         		gov.trials[currID].WM_correct = false;
+    	 }
+    	 if ((trueprobeidx!=locprobe) && WManswer==1) { // 0 is yes, no is 1
+         		gov.trials[currID].WM_correct = true;
+    	 }
+    	 if ((trueprobeidx!=locprobe) && WManswer==0) { // 0 is yes, no is 1
+         		gov.trials[currID].WM_correct = false;
+    	 }
+    	}
 
     // prompt: '<p> type your answer now </p>',
 }
@@ -747,7 +807,7 @@ var staircase_procedure = {
 
     timeline: [fixation_pre, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show,Gabor_mask, Gabor_probe, Confj_response,fixation_post],
 
-    repetitions: nStaircaseTrials,
+    repetitions: nTrialsregBlock,
 
 
 }
@@ -798,7 +858,11 @@ if (doInstruct ==true) {
 
 
 // now push the practice blocks used for setting the staircased difficulty.
-timeline.push(remstartblock, staircase_procedure, blockBreak, blockResume)
+for (let bID=0; bID<nStaircaseBlocks; bID++){
+
+	timeline.push(remstartblock, staircase_procedure, blockBreak, blockResume)
+}
+
 // now push the end of practice slides...
 timeline.push(endofPracshow)
 
@@ -866,8 +930,9 @@ jsPsych.init({
 
     
     timeline:timeline, // just contains instructions now.
-    preload_images: GaborFiles,
+    preload_images: GaborFiles, Maskfiles,
     show_progress_bar: true,
+    auto_update_progress_bar: false,
     on_finish: function() {
         jsPsych.data.displayData();
     }

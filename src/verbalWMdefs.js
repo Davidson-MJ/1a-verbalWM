@@ -651,7 +651,7 @@ class BuildExp extends Governor {
             this.nBlocks = args.Blockrepetitions;
             this.useTypes = args.useTypesBuild;
             this.PermuteBlocks = args.PermBlocks;
-            this.nStaircaseTrials = args.numStaircase;
+            this.nStaircaseBlocks = args.numStaircase;
         }
 
 
@@ -669,64 +669,66 @@ class BuildExp extends Governor {
             getTrials(section="experimental") {
             let trials = [];
             let realId = 0;
-            // which side will correct be placed on?
-            let whichSideDeck = utils.shuffleShoe([0, 1], utils.sumList(this.trialsperblock));
             let trialCount = this.trialsperblock;
-
             let blockStructure = null;
             let Blocktypes = this.useTypes;
-            let nStaircase = this.nStaircaseTrials;
+            let nStaircasebl = this.nStaircaseBlocks;
             console.log(trialCount)
 
             // first add the basic practice block, which is used for staircasing.
-            let bid= 0; //block counter
-            let id=0;
-            let realid = 0; // cumulative counter.
+            // set all counters to zero.
+            let bid= 0; //block counter            
+            
             let ttypeid=0; // Baseline type.
 
-            for (let i =0; i< nStaircase; i++) { // for each trial in our staircase block
+            for (let bID =0; bID< nStaircasebl; bID++){
 
-             // push some empty info into the trials array, which we will overwrite later
-             // with the gov command in index.html window. Then we can revisit these 
-             // trials data, when calling other functions.
-             
-             id++; // increase id count
-             
-             trials.push(new Trial(id, {
+                    bid++; //start at 1
 
-                type: ttypeid,
-                typeName: trialTypeNames[ttypeid],
-                block: bid,                            
-                trialid: id,
-                realID: realId,
-                
-                WMstring: [NaN],
-                WMprobe: [NaN],                        
-                WM_answer: [NaN],
-                WM_correct:[NaN],
-                WM_rt:[NaN],
-                WM_difficulty:[NaN],
-                
-                degDiff: this.degree_diff,
-                OrienDegs: [NaN,NaN], // left and right
-                OrienProbe: [NaN],
-                Orien_correct: [NaN],
-                Orien_rt:[NaN],
-                Orien_answer: [NaN,NaN],
-                Orien_correct: NaN,
+                    for (let i =0; i< trialCount; i++) { // for each trial in our staircase block
 
-                confidence: [NaN],
-                confidence_rt: [NaN],
+                     // push some empty info into the trials array, which we will overwrite later
+                     // with the gov command in index.html window. Then we can revisit these 
+                     // trials data, when calling other functions.
+                     
+                     
+                     
+                     trials.push(new Trial(realId, {
 
-                applyStaircase: true,
+                        type: ttypeid,
+                        typeName: trialTypeNames[ttypeid],
+                        block: bid,                            
+                        trialid: i,
+                        realID: realId,
+                        
+                        WMstring: [NaN],
+                        WMprobe: [NaN],                        
+                        WM_answer: [NaN],
+                        WM_correct:[NaN],
+                        WM_rt:[NaN],
+                        WM_difficulty:[NaN],
+                        
+                        degDiff: this.degree_diff,
+                        OrienDegs: [NaN,NaN], // left and right
+                        OrienProbe: [NaN],
+                        Orien_correct: [NaN],
+                        Orien_rt:[NaN],
+                        Orien_answer: [NaN,NaN],
+                        Orien_correct: NaN,
 
-                })); //end new Trial
+                        confidence: [NaN],
+                        confidence_rt: [NaN],
 
-                realId++;
-            } // trials per block
+                        applyStaircase: true,
+
+                        })); //end new Trial
+
+                        realId++;
+                    } // trials per block
+                }// staircase blocks
 
 
-            if (section == "experiment") // then procedure is VWMarray,probe,discrim, (no interference)
+            if (section == "experimental") // then procedure is VWMarray,probe,discrim, (no interference)
                 {
                     // let bid= 0; //block couner
                     // let id=0;
@@ -763,14 +765,14 @@ class BuildExp extends Governor {
                             // with the gov command in index.html window. Then we can revisit these 
                             // trials data, when calling other functions.
                             
-                                id++; // increase id count
+                               
                                 
-                                trials.push(new Trial(id, {
+                                trials.push(new Trial(realId, {
                                
                                     type: ttypeid,
                                     typeName: trialTypeNames[ttypeid],
                                     block: bid,                            
-                                    trialid: id,
+                                    trialid: i,
                                     realID: realId,
                                     
                                     WMstring: [NaN],
@@ -802,7 +804,7 @@ class BuildExp extends Governor {
 
                         } // blocks
 
-                        ttypeid++; 
+                       
                     } // procedure types
                 }
                 return trials
@@ -984,6 +986,6 @@ class Trial {
 
 
 
-  export {utils, trialTypes, trialTypeNames, processData,  OrientationStim, GaborFiles, OrientationMasks, Trial, Governor, makeV_WMarray, makeV_WMprobe, BuildExp};
+  export {utils, trialTypes, trialTypeNames, processData,  OrientationStim, GaborFiles, Maskfiles, OrientationMasks, Trial, Governor, makeV_WMarray, makeV_WMprobe, BuildExp};
 
 
