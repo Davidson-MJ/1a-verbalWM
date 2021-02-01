@@ -224,9 +224,11 @@ class OrientationStim {
 class OrientationMasks {
     constructor(tmp) {
         // select two from range available.
-        let ims = jsPsych.randomization.sampleWithoutReplacement([0,1,2,3,4,5,6,7,8,9], 2);
-        var path1 = MaskFiles[ims[0]];
-        var path2 = MaskFiles[ims[1]];
+        // let ims = jsPsych.randomization.sampleWithoutReplacement([0,1,2,3,4,5,6,7,8,9], 2);
+        //var path1 = MaskFiles[ims[0]];
+        // var path2 = MaskFiles[ims[1]];
+        var path1 = MaskFiles[0];
+        var path1 = MaskFiles[1];
         var dual_mask = [path1.toString(), path2.toString()];
         this.dual_mask = dual_mask; // this is passed out to Jsobject
 
