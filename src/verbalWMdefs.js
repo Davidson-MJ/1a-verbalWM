@@ -228,7 +228,7 @@ class OrientationMasks {
         //var path1 = MaskFiles[ims[0]];
         // var path2 = MaskFiles[ims[1]];
         var path1 = MaskFiles[0];
-        var path1 = MaskFiles[1];
+        var path2 = MaskFiles[1];
         var dual_mask = [path1.toString(), path2.toString()];
         this.dual_mask = dual_mask; // this is passed out to Jsobject
 

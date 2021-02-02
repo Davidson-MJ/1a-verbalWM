@@ -59,8 +59,8 @@ let useTypes = [0,1,2,3]; // these are the different conditions. Defined as:
   //   response: 2,    // WM interference overlaps with response mapping
   //   confj: 3,   // WM interference overlaps with providing confjudgement
 
-let npracgabor_only = 10; // 5 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
-let nTrialsregBlock = 20; //10 ntrials per condition (useTypes above).
+let npracgabor_only = 1; // 10 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
+let nTrialsregBlock = 2; //20 ntrials per condition (useTypes above).
 let nBlockreps = 3; // nblocks of nTrialsregBlock, per condition.
 // let fixation_times = [1000, 1100, 1500, 2000]; // fix cross will jitter using these vals.
 let doInstruct = true; // show instruction slide show.
@@ -287,7 +287,7 @@ var blockResume = {
         // display % correct
         let wmpct = (wmtotal/gov.blockLength)*100;
         let impct = (imtotal/gov.blockLength)*100;
-         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
+         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct.toFixed(2) + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct.toFixed(2) + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
 
 
     }
@@ -615,35 +615,36 @@ var V_WMarray ={
          gov.trials[currID].WMstring = mylaststring;   
 
 
+         // NOW COMPUTED BACK END (in offline analysis)
 
-         // also store the letter indices,  and subsequent difficulty
-         let characters = "FGHJKLMNPQRST"; 
-         // find index of tmpstring
-         let tmp=[];
-         let idx=[];
-         let indexwas=[];
-         for (let ic=0; ic<=mylaststring.length-1; ic++){
-         	tmp = mylaststring[ic];
-         	idx =characters.indexOf(tmp); 
+         // // also store the letter indices,  and subsequent difficulty
+         // let characters = "FGHJKLMNPQRST"; 
+         // // find index of tmpstring
+         // let tmp=[];
+         // let idx=[];
+         // let indexwas=[];
+         // for (let ic=0; ic<=mylaststring.length-1; ic++){
+         // 	tmp = mylaststring[ic];
+         // 	idx =characters.indexOf(tmp); 
          	
-         	indexwas.push(idx); // add number to array
-         }
+         // 	indexwas.push(idx); // add number to array
+         // }
          
-         console.log('check index of mylaststring', indexwas);
+         // console.log('check index of mylaststring', indexwas);
 
-         // now how many consecutive pairs needed to be in order?, use the difference (>0 is not alphabetized)
-         let tmpdiff=[];
-         let reorder_count=0;
-         for (let i = 0; i <=V_WMarraylength-2; i++) {
-         	//diff between pair of characters.
-         	tmpdiff= indexwas[i] - indexwas[i+1];
+         // // now how many consecutive pairs needed to be in order?, use the difference (>0 is not alphabetized)
+         // let tmpdiff=[];
+         // let reorder_count=0;
+         // for (let i = 0; i <=V_WMarraylength-2; i++) {
+         // 	//diff between pair of characters.
+         // 	tmpdiff= indexwas[i] - indexwas[i+1];
          	
-         	if (tmpdiff>0) { // if not alphabetized
-         		reorder_count=reorder_count+1;
-         	} 
-         }
-         // store the amount that were already ordered.
-         gov.trials[currID].WM_difficulty=reorder_count;
+         // 	if (tmpdiff>0) { // if not alphabetized
+         // 		reorder_count=reorder_count+1;
+         // 	} 
+         // }
+         // // store the amount that were already ordered.
+         // gov.trials[currID].WM_difficulty=reorder_count;
 
 
     }
@@ -707,20 +708,26 @@ var V_WMprobe ={
          // find the true index of the probed letter. Then determine if it matches the probed location.
          let lprobe = []; let locprobe= [];
          lprobe =gov.trials[currID].WMprobe[0]; //probed letter.
-         locprobe=gov.trials[currID].WMprobe[3]; //probed letter location.
-         let trueprobeidx = mylaststring.indexOf(lprobe);
+         locprobe=gov.trials[currID].WMprobe[2]; //probed letter location.
+         let WMarray= gov.trials[currID].WMstring;
+         let sortedWM = WMarray.split("").sort(); // split, then sort.
+
+         let trueprobeidx = sortedWM.indexOf(lprobe);
          // see if the participant response should be yes or no, by matching the probed location with true location.
+         trueprobeidx = trueprobeidx+1; //adjust for java index at 0
+         locprobe = parseInt(locprobe); // compare integers.
          //HACK BELOW
-         if ((trueprobeidx==locprobe) && WManswer==0) { // 0 is yes, no is 1
+
+         if ((trueprobeidx==locprobe) && WManswer=="0") { // WManswer 0 is 'yes',  1 is 'no'
          	gov.trials[currID].WM_correct = true;
          }
-         if ((trueprobeidx==locprobe) && WManswer==1) { // 0 is yes, no is 1
+         if ((trueprobeidx==locprobe) && WManswer=="1") { // 
          		gov.trials[currID].WM_correct = false;
     	 }
-    	 if ((trueprobeidx!=locprobe) && WManswer==1) { // 0 is yes, no is 1
+    	 if ((trueprobeidx!=locprobe) && WManswer=="1") { // 
          		gov.trials[currID].WM_correct = true;
     	 }
-    	 if ((trueprobeidx!=locprobe) && WManswer==0) { // 0 is yes, no is 1
+    	 if ((trueprobeidx!=locprobe) && WManswer=="0") { // 
          		gov.trials[currID].WM_correct = false;
     	 }
     	}
