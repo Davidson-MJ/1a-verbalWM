@@ -59,8 +59,8 @@ let useTypes = [0,1,2,3]; // these are the different conditions. Defined as:
   //   response: 2,    // WM interference overlaps with response mapping
   //   confj: 3,   // WM interference overlaps with providing confjudgement
 
-let npracgabor_only = 1; // 10 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
-let nTrialsregBlock = 2; //20 ntrials per condition (useTypes above).
+let npracgabor_only = 5; // 5 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
+let nTrialsregBlock = 20; //20 ntrials per condition (useTypes above).
 let nBlockreps = 3; // nblocks of nTrialsregBlock, per condition.
 // let fixation_times = [1000, 1100, 1500, 2000]; // fix cross will jitter using these vals.
 let doInstruct = true; // show instruction slide show.
@@ -75,7 +75,7 @@ let fixPreStim = 500; //short fixation interval.
 let trialStimDuration = 200; // gabor show time.
 
 let wholeExpStaircasing= false;
-let nStaircaseBlocks = 3; // *nTrialsregBlock, completed pre experiment, baseline condition only.
+let nStaircaseBlocks = 4; // *nTrialsregBlock, completed pre experiment, baseline condition only.
 
 let PermBlocksYN = true; // permute the order of the blocks (of those specified in useTypes above)
 let endRedirectURL = 'https://app.prolific.co/submissions/complete?cc=595E8D06'; //What URL to redirect to after the experiment, 
@@ -287,7 +287,7 @@ var blockResume = {
         // display % correct
         let wmpct = (wmtotal/gov.blockLength)*100;
         let impct = (imtotal/gov.blockLength)*100;
-         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct.toFixed(2) + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct.toFixed(2) + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
+         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct.toFixed() + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct.toFixed() + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
 
 
     }
