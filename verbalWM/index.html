@@ -156,8 +156,8 @@ const instruct1 ={
 }
 
 // add the second type of instructions, explaining the interleaved VWM task.
-let instructionFiles2 =[];
-let numOfInstructFiles2 = 7;
+let instructionFiles2 =[]; // for explaining the vWM overlap, and experiment structure]
+let numOfInstructFiles2 = 12;
 for (let c=1;c<=numOfInstructFiles2;c++)
     {
     let fileName = '<img width="1000" height="560" src="./instructions/explainVWM/Slide' + c.toString() + '.jpeg"></img>';
@@ -284,16 +284,67 @@ var blockResume = {
         	
         } //
         
+        // calculate n blocks progress.
+        //using current block number and predefined parameters.
+        let currB =gov.trials[currID].block-1;
+        let nPrac=gov.numStaircase;
+        let expB = gov.useTypesBuild.length * gov.Blockrepetitions;
+        let tmpstring=[];
+        if (currB<= nPrac){  // then within practice blocks.
+        	
+        	tmpstring= '<p> You have completed ' + currB.toString() + ' of ' + nPrac.toString() +' practice blocks.</p> <p> You have completed 0 of ' + expB.toString() + ' experimental blocks. </p>'}
+        else {
+        	// then within practice blocks now.
+        	let expBcounter = currB - nPrac;
+        	
+        	tmpstring = '<p> You have completed ' + nPrac.toString() + ' of ' + nPrac.toString() +' practice blocks.</p> <p> You have completed ' + expBcounter.toString() +' of ' + expB.toString() + ' experimental blocks. </p>' };
+
+        
         // display % correct
+        
         let wmpct = (wmtotal/gov.blockLength)*100;
         let impct = (imtotal/gov.blockLength)*100;
-         trial.stimulus = '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct.toFixed() + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct.toFixed() + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
+         	
+        	trial.stimulus = tmpstring + '<p> Your recent performance: </p> <p> <div style = "font-size:25px; color:blue;">  Image task: </div> ' + impct.toFixed() + ' % </p> <p> <div style = "font-size:25px; color:red;"> Memory task: </div>' + wmpct.toFixed() + ' % </p> <p> Enjoy a short break. </p> <p> When you are ready, Click "Next" to resume.</p> <div style="width: 700px;">';
 
 
     }
 }
 
-// a short interval fixation
+// a short interval fixation - this one also updates the progress bar (use in main exp)
+var fixation_pre_updateProgBar = {
+    type: "html-keyboard-response",
+    stimulus: '<div style = "font-size:60px; "> + </div>' ,
+    choices:jsPsych.NO_KEYS, // freezes keyboard
+    trial_duration:fixPreStim, // short duration
+    on_load: (trial)=>{
+    	gov.fullscreenMode();
+    	
+    	// update progress bar at start of each trial.
+
+    	let currID=gov.currentTrialIndex; //current trial
+    	let currB =gov.trials[currID].block; // current block
+    	let btrial = gov.trials[currID].trialid+1; //trial position within block\
+    	let ntrials = gov.blockLength;
+    	let allblocks =gov.Blockrepetitions * gov.useTypesBuild.length + gov.numStaircase
+    	// get and set the progress bar text.
+    	let settext = "Trial " + btrial.toString() + '/' + ntrials.toString()+ " in Block " + currB.toString() + "/" + allblocks.toString() + ".";  
+    	
+    	var x = document.getElementById("jspsych-progressbar-container")    		
+    		x.innerHTML= "<span> <p> " + settext + "</p> <p> Completion progress: </p> </span><div id='jspsych-progressbar-outer'><div id='jspsych-progressbar-inner'></div></div>";
+    		// of the format: 
+    		//x.innerHTML = "<span>Completion Progress</span><div id="jspsych-progressbar-outer"><div id="jspsych-progressbar-inner"></div></div>"
+
+        //also update progress bar filling.
+        let prog = [];
+        prog = currID/gov.totalTrialsforProgbar;
+        jsPsych.setProgressBar(prog);
+    		 
+
+    	// gov.drawProgressBar();
+    } 
+}
+// a short interval fixation only
 var fixation_pre = {
     type: "html-keyboard-response",
     stimulus: '<div style = "font-size:60px; "> + </div>' ,
@@ -301,7 +352,7 @@ var fixation_pre = {
     trial_duration:fixPreStim, // short duration
     on_load: (trial)=>{
     	gov.fullscreenMode();
-    	// gov.drawProgressBar();
+    	
     } 
 }
 
@@ -327,10 +378,8 @@ var fixation_post = {
         on_start: function(){
         	//determine current experiment progress, and manually set progress bar.
         	// this is at the end of each trial.
-        	let currID = gov.currentTrialIndex;
-        	let prog = [];
-        	prog = currID/gov.totalTrialsforProgbar;
-        	jsPsych.setProgressBar(prog); 
+        	
+
         },
         on_finish(trial){ // keep track of the trials.
             // gov.drawProgressBar();
@@ -813,7 +862,7 @@ var Gaboronly_procedure = { // added as an early practice type. Provides feedbac
 
 var staircase_procedure = {
 
-    timeline: [fixation_pre, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show,Gabor_mask, Gabor_probe, Confj_response,fixation_post],
+    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show,Gabor_mask, Gabor_probe, Confj_response,fixation_post],
 
     repetitions: nTrialsregBlock,
 
@@ -823,7 +872,7 @@ var baseline_procedure = { // in this version, we just switch between tasks.
 
     //timeline: [fixation_pre, V_WMarray, fixation_pre, V_WMprobe, fixation_pre, Gabor_show,fixation_pre, Gabor_probe, Confj_response,fixation_post],
 
-    timeline: [fixation_pre, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,fixation_post],
+    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,fixation_post],
 
     repetitions: nTrialsregBlock,
 
@@ -831,7 +880,7 @@ var baseline_procedure = { // in this version, we just switch between tasks.
 
 var encoding_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre, V_WMarray, fixation_pre, Gabor_show, Gabor_mask, V_WMprobe, fixation_Feedback, Gabor_probe, Confj_response,fixation_post],
+    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, Gabor_show, Gabor_mask, V_WMprobe, fixation_Feedback, Gabor_probe, Confj_response,fixation_post],
 
     repetitions: nTrialsregBlock,
 }
@@ -839,14 +888,14 @@ var encoding_procedure = { // in this version, the VWM task overlaps with stimul
 
 var discrimresp_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre, Gabor_show, Gabor_mask, V_WMarray, fixation_pre, Gabor_probe,  fixation_pre, V_WMprobe, fixation_Feedback, Confj_response,fixation_post],
+    timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask, V_WMarray, fixation_pre, Gabor_probe,  fixation_pre, V_WMprobe, fixation_Feedback, Confj_response,fixation_post],
 
     repetitions: nTrialsregBlock,
 }
 
 var confresp_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre, Gabor_show, Gabor_mask,  Gabor_probe, fixation_pre, V_WMarray,  fixation_pre, Confj_response, V_WMprobe, fixation_Feedback, fixation_post],
+    timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask,  Gabor_probe, fixation_pre, V_WMarray,  fixation_pre, Confj_response, V_WMprobe, fixation_Feedback, fixation_post],
 
     repetitions: nTrialsregBlock,
 }
@@ -941,6 +990,8 @@ jsPsych.init({
     preload_images: GaborFiles, MaskFiles,
     show_progress_bar: true,
     auto_update_progress_bar: false,
+
+
     on_finish: function() {
         jsPsych.data.displayData();
     }

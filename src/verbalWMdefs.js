@@ -203,11 +203,15 @@ class OrientationStim {
     }
 
 
-    
+    let q= Math.random(); // reset value
+    if (q<.5) {
+        var path1 = GaborFiles[im1]; // get the appropriate images
+        var path2 = GaborFiles[im2];
+    } else {
+        var path1 = GaborFiles[im2]; // opposite direction.
+        var path2 = GaborFiles[im1];
 
-    var path1 = GaborFiles[im1]; // get the appropriate images
-    var path2 = GaborFiles[im2];
-
+    }
 
     // place in array for the JSPSych vsl-grid-scene command.
 
@@ -312,6 +316,9 @@ class Governor {
                         processedData: JSON.stringify(processData(this))
                     }
             }
+
+
+            
 
             authenticate(datum) {
                 // Fire off the request to /form.php
@@ -699,8 +706,8 @@ class BuildExp extends Governor {
 
                         type: ttypeid,
                         typeName: trialTypeNames[ttypeid],
-                        block: bid,                            
-                        trialid: i,
+                        block: bid, //starts at 1                           
+                        trialid: i, //starts at 0
                         realID: realId,
                         
                         WMstring: [NaN],
