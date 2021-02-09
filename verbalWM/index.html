@@ -59,9 +59,9 @@ let useTypes = [0,1,2,3]; // these are the different conditions. Defined as:
   //   response: 2,    // WM interference overlaps with response mapping
   //   confj: 3,   // WM interference overlaps with providing confjudgement
 
-let npracgabor_only = 5; // 5 practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
-let nTrialsregBlock = 20; //20 ntrials per condition (useTypes above).
-let nBlockreps = 3; // nblocks of nTrialsregBlock, per condition.
+let npracgabor_only = 5; // [5] practicing gabor discrimination, with confidence only (no verbal WM task), this is during the instructions pre-experiment.
+let nTrialsregBlock = 20; //[20] ntrials per condition (useTypes above).
+let nBlockreps = 3; // [3] nblocks of nTrialsregBlock, per condition.
 // let fixation_times = [1000, 1100, 1500, 2000]; // fix cross will jitter using these vals.
 let doInstruct = true; // show instruction slide show.
 let fixation_times = 500; // long interval.
@@ -75,7 +75,7 @@ let fixPreStim = 500; //short fixation interval.
 let trialStimDuration = 200; // gabor show time.
 
 let wholeExpStaircasing= false;
-let nStaircaseBlocks = 4; // *nTrialsregBlock, completed pre experiment, baseline condition only.
+let nStaircaseBlocks = 4; //[4]  *nTrialsregBlock, completed pre experiment, baseline condition only.
 
 let PermBlocksYN = true; // permute the order of the blocks (of those specified in useTypes above)
 let endRedirectURL = 'https://app.prolific.co/submissions/complete?cc=AA880DA2'; //What URL to redirect to after the experiment, 
@@ -268,7 +268,10 @@ var blockResume = {
         gov.fullscreenMode();
 
         // display feedback in the text. Calculate the % correct for verbal and image tasks, this block. 
-        let currID=gov.currentTrialIndex;
+        var currID=gov.currentTrialIndex;
+        if (typeof(currID)=='undefined') {
+            currID = gov.trials.length;
+        }
         let blockStart= currID - gov.blockLength;
         // extract the responses from the gov.trials object, over the previous block 
         let wmtotal = 0;
@@ -286,7 +289,16 @@ var blockResume = {
         
         // calculate n blocks progress.
         //using current block number and predefined parameters.
-        let currB =gov.trials[currID].block-1;
+        // careful because the ID counter is incremented before this 'block resume'.
+        // make sure we havent finished th experiment.
+        let x = typeof(gov.trials[currID])
+        if (x=='undefined'){
+            currID = gov.trials.length-1; /// bit of a HACK, but only needs to work at end of exp. alternatively could pop the last 'blockResume' from the timeline.
+        }
+        else {
+            currID= currID-1; // need to account for the trial increment, which happened at the preceding timeline event [fixation_post].
+        }
+        let currB =gov.trials[currID].block;
         let nPrac=gov.numStaircase;
         let expB = gov.useTypesBuild.length * gov.Blockrepetitions;
         let tmpstring=[];
@@ -970,6 +982,10 @@ for (let bID = 0; bID<currBlockorder.length; bID ++) {
     };
 };
 
+// pop the last block resume?
+// console.log('check end of timeline Pre:', timeline);
+// timeline.pop();
+// console.log('check end of timeline post pop:', timeline);
 
 // push end of Exp...
 timeline.push(EndExp_show)
