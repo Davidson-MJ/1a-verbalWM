@@ -386,7 +386,7 @@ var fixation_post = {
     stimulus: '<div style = "font-size:60px;"> + </div>' ,
     choices:jsPsych.NO_KEYS, // freezes keyboard
     //trial_duration is fixation time, randomized from the fixation_times array set above.
-    trial_duration: 500, // 200 ms 
+    trial_duration: fixation_times, // 200 ms 
         on_start: function(){
         	//determine current experiment progress, and manually set progress bar.
         	// this is at the end of each trial.
@@ -406,7 +406,7 @@ var fixation_Feedback = {
     type: "html-keyboard-response",    
     stimulus:  '',        
     choices: jsPsych.NO_KEYS, // freezes keyboard
-    trial_duration: 500, // 200 ms 
+    trial_duration: fixation_times, // 200 ms 
 
     on_start: function(trial) {         
        // define colour based on previous timing of response to (to VWM probe).
@@ -432,7 +432,7 @@ var gabor_feedback = {
     type: "html-keyboard-response",    
     stimulus:  '',        
     choices: jsPsych.NO_KEYS, // freezes keyboard
-    trial_duration: 500, // 200 ms 
+    trial_duration: fixation_times, // 200 ms 
 
     on_start: function(trial) {         
        // define colour based on previous timing of response to (to VWM probe).
