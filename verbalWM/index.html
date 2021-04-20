@@ -72,7 +72,8 @@ let VWM_timeout = 5000; //5 s time out to make response, this is used to define 
 let ImageSize = 200; // pixels
 let Initialdegree_diff = 15 ; // initial degree difference. Start large, increments by 1.
 let fixPreStim = 500; //short fixation interval.
-let trialStimDuration = 200; // gabor show time.
+let trialStimDuration = 1500; // gabor show time. (was 2000)
+let maskTime = 200; // ms was 2000, now removed.(ver 2)
 
 let wholeExpStaircasing= false;
 let nStaircaseBlocks = 4; //[4]  *nTrialsregBlock, completed pre experiment, baseline condition only.
@@ -367,7 +368,17 @@ var fixation_pre = {
     	
     } 
 }
-
+// a longer interval fixation, used to equate timings between block types.
+var fixation_2p5s = {
+    type: "html-keyboard-response",
+    stimulus: '<div style = "font-size:60px; "> + </div>' ,
+    choices:jsPsych.NO_KEYS, // freezes keyboard
+    trial_duration:2500, // short duration
+    on_load: (trial)=>{
+    	gov.fullscreenMode();
+    	
+    } 
+}
 // a longer interval fixation (e.g. for maintenance of array in WM)
 var fixation_maintenance = { 
     type: "html-keyboard-response",
@@ -387,12 +398,7 @@ var fixation_post = {
     choices:jsPsych.NO_KEYS, // freezes keyboard
     //trial_duration is fixation time, randomized from the fixation_times array set above.
     trial_duration: fixation_times, // 200 ms 
-        on_start: function(){
-        	//determine current experiment progress, and manually set progress bar.
-        	// this is at the end of each trial.
-        	
-
-        },
+        
         on_finish(trial){ // keep track of the trials.
             // gov.drawProgressBar();
             gov.currentTrialIndex++ ;
@@ -406,7 +412,7 @@ var fixation_Feedback = {
     type: "html-keyboard-response",    
     stimulus:  '',        
     choices: jsPsych.NO_KEYS, // freezes keyboard
-    trial_duration: fixation_times, // 200 ms 
+    trial_duration: 800, // 200 ms 
 
     on_start: function(trial) {         
        // define colour based on previous timing of response to (to VWM probe).
@@ -414,7 +420,7 @@ var fixation_Feedback = {
        let prevRT = gov.trials[currID].WM_rt;
        if (prevRT == null) {        
         // define stimulus anew, based on previous RT. Now a big red X
-       trial.stimulus =  '<div style = "font-size:50px; color:red">  <p> Too Slow </p> <p> X </p> </div>' ; //red X
+       trial.stimulus =  '<div style = "font-size:50px";>  <p> Too slow in </div> <div style= "font-size:50px ; color:red"> memory task </p> </div>' ; //red X
        }
 
        else {
@@ -423,6 +429,14 @@ var fixation_Feedback = {
 
        // note that time-out for WMrt 
     },
+
+
+    //important!! Only use this on finish procedure, when running EXP ver 2. As feedback is placed at trial end. Otherwise, comment out this procedure (trials incremented instead in fixation_post).
+    on_finish(trial){ // keep track of the trials.
+            // gov.drawProgressBar();
+            gov.currentTrialIndex++ ;
+            console.log('trial count now:', gov.currentTrialIndex);
+    }
        
 }
 
@@ -473,7 +487,7 @@ var EndExp_show = {
 var Gabor_show = {
     type: 'vsl-grid-scene',
     stimuli: '', //of form…[["./assets/Gabors/Orientation1.jpg","./assets/Gabors/Orientation100.jpg"]], // this gets overwritten below.
-    timing_duration: 300, 
+    trial_duration: trialStimDuration, 
     image_size: [ImageSize, ImageSize],
 
     on_start: function (trial) {
@@ -516,7 +530,7 @@ var Gabor_show = {
 var Gabor_mask = {
     type: 'vsl-grid-scene',
     stimuli: '', 
-    timing_duration: 100, 
+    trial_duration: maskTime, 
     image_size: [ImageSize, ImageSize],
 
     on_start: function (trial) {
@@ -865,7 +879,11 @@ var Confj_response ={
 }
 
 var Gaboronly_procedure = { // added as an early practice type. Provides feedback.
-	timeline: [fixation_pre, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,gabor_feedback],
+	//ver 1
+	// timeline: [fixation_pre, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,gabor_feedback],
+	
+	//ver 2
+	timeline: [fixation_pre, Gabor_show, Gabor_probe, Confj_response,gabor_feedback],
 	
     repetitions: npracgabor_only,
 
@@ -873,26 +891,38 @@ var Gaboronly_procedure = { // added as an early practice type. Provides feedbac
 /////////define the different procedures (WM task interference types)
 
 var staircase_procedure = {
+ 	// This is the same as the basline procedure, in ver 1. in ver 2, reduced gaps before conf response, as not used in staircasing.
 
-    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show,Gabor_mask, Gabor_probe, Confj_response,fixation_post],
+ 	//first version of timings:
+    // timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show,Gabor_mask, Gabor_probe, Confj_response,fixation_post],
+
+    //Second version of timings (exp 2). Longer durations between stim and cues, to match experimental blocks (i.e. stim, resp, and conf interference conditions)
+	timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_2p5s, fixation_pre, V_WMprobe, Gabor_show, fixation_2p5s, fixation_pre, fixation_pre, Gabor_probe, Confj_response,fixation_Feedback],
 
     repetitions: nTrialsregBlock,
 
 
 }
-var baseline_procedure = { // in this version, we just switch between tasks.
+var baseline_procedure = { // in this version, we just switch between tasks. 
 
-    //timeline: [fixation_pre, V_WMarray, fixation_pre, V_WMprobe, fixation_pre, Gabor_show,fixation_pre, Gabor_probe, Confj_response,fixation_post],
-
-    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,fixation_post],
-
+    
+	// Ver 1
+    // timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, V_WMprobe, fixation_Feedback, Gabor_show, Gabor_mask, Gabor_probe, Confj_response,fixation_post],
+    
+    // ver 2
+    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_2p5s, fixation_pre, V_WMprobe, Gabor_show, fixation_2p5s, fixation_pre, fixation_pre, Gabor_probe,  fixation_2p5s, Confj_response,fixation_Feedback],
     repetitions: nTrialsregBlock,
 
 }
 
 var encoding_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, Gabor_show, Gabor_mask, V_WMprobe, fixation_Feedback, Gabor_probe, Confj_response,fixation_post],
+    //ver 1
+    // timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre, Gabor_show, Gabor_mask, V_WMprobe, fixation_Feedback, Gabor_probe, Confj_response,fixation_post],
+
+    //ver 2
+    timeline: [fixation_pre_updateProgBar, V_WMarray, fixation_pre,fixation_pre,fixation_pre, Gabor_show,   V_WMprobe,fixation_pre, fixation_pre, Gabor_probe, fixation_2p5s, Confj_response,fixation_Feedback],
+
 
     repetitions: nTrialsregBlock,
 }
@@ -900,14 +930,22 @@ var encoding_procedure = { // in this version, the VWM task overlaps with stimul
 
 var discrimresp_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask, V_WMarray, fixation_pre, Gabor_probe,  fixation_pre, V_WMprobe, fixation_Feedback, Confj_response,fixation_post],
+    //ver 1
+    // timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask, V_WMarray, fixation_pre, Gabor_probe,  fixation_pre, V_WMprobe, fixation_Feedback, Confj_response,fixation_post],
+
+    //ver 2
+	timeline: [fixation_pre_updateProgBar, Gabor_show, fixation_pre, fixation_pre, V_WMarray, fixation_pre, Gabor_probe, V_WMprobe, Confj_response, fixation_Feedback],
 
     repetitions: nTrialsregBlock,
 }
 
 var confresp_procedure = { // in this version, the VWM task overlaps with stimulus encoding.
 
-    timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask,  Gabor_probe, fixation_pre, V_WMarray,  fixation_pre, Confj_response, V_WMprobe, fixation_Feedback, fixation_post],
+    //ver 1 
+    // timeline: [fixation_pre_updateProgBar, Gabor_show, Gabor_mask,  Gabor_probe, fixation_pre, V_WMarray,  fixation_pre, Confj_response, V_WMprobe, fixation_Feedback, fixation_post],
+	
+	//ver 2
+    timeline: [fixation_pre_updateProgBar, Gabor_show, fixation_2p5s, fixation_pre,fixation_pre, Gabor_probe, fixation_pre, V_WMarray, Confj_response, V_WMprobe, fixation_Feedback],
 
     repetitions: nTrialsregBlock,
 }
